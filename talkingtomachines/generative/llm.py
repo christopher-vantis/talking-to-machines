@@ -343,36 +343,24 @@ def query_open_ai(
     return ""
 
 
+# In der Datei wo query_hugging_face definiert ist:
+
 def query_hugging_face(
     llm_client: openai.OpenAI, message_history: List[dict], temperature: float
 ) -> Any:
-    """Query Hugging Face's dedicated inference API end point with the provided prompt.
-
-    Args:
-        llm_client (openai.OpenAI): The LLM client from OpenAI class.
-        message_history (List[dict]): Contains the history of message exchanged between user and assistant.
-        temperature (float): The model temperature setting for the LLM.
-
-    Returns:
-        Any: Response from the LLM.
-    """
     attempt = 0
     while attempt < MAX_RETRIES:
         attempt += 1
         try:
+            # ÄNDERE DIESE ZEILE:
             response = llm_client.chat.completions.create(
-                model="tgi",
+                model="microsoft/DialoGPT-medium",  # ← HIER MODEL NAME EINFÜGEN
                 messages=message_history,
                 temperature=temperature,
                 stream=False,
             )
             formatted_response = response.choices[0].message.content.strip()
-
             return formatted_response
-
         except Exception as e:
-            # Log the exception
-            print(
-                f"Error during Hugging Face API call: {e}. Retrying in {RETRY_DELAY // 60} mins..."
-            )
+            print(f"Error during Hugging Face API call: {e}. Retrying in {RETRY_DELAY // 60} mins...")
             time.sleep(RETRY_DELAY)
