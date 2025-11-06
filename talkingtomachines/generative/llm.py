@@ -352,9 +352,11 @@ def query_hugging_face(
     while attempt < MAX_RETRIES:
         attempt += 1
         try:
-            # ÄNDERE DIESE ZEILE:
+            # WICHTIG: Base URL auf HF Cloud setzen
+            llm_client.base_url = "https://router.huggingface.co/hf-inference/v1"
+            
             response = llm_client.chat.completions.create(
-                model="microsoft/DialoGPT-medium",  # ← HIER MODEL NAME EINFÜGEN
+                model="microsoft/DialoGPT-medium",  # ECHTES HF Model
                 messages=message_history,
                 temperature=temperature,
                 stream=False,
